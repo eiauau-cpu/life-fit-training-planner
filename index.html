@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Life-Fit Training Planner</title>
+  <style>
+    :root {
+      --ink: #17201c;
+      --muted: #60706a;
+      --line: #d9e2dd;
+      --paper: #fbfcfb;
+      --panel: #ffffff;
+      --mint: #2f8f72;
+      --mint-soft: #e5f4ee;
+      --gold: #c7892b;
+      --coral: #cf604d;
+      --shadow: 0 18px 46px rgba(24, 39, 33, 0.12);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: linear-gradient(180deg, rgba(229,244,238,.82), rgba(251,252,251,.96) 34%), var(--paper); font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif; line-height: 1.5; }
+    button, input, select { font: inherit; }
+    .app { min-height: 100vh; display: grid; grid-template-columns: minmax(300px, 420px) minmax(0, 1fr); }
+    aside { background: var(--panel); border-right: 1px solid var(--line); padding: 28px; position: sticky; top: 0; height: 100vh; overflow: auto; }
+    main { padding: 32px; overflow: hidden; }
+    .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 26px; }
+    .mark { width: 42px; height: 42px; border-radius: 8px; background: var(--ink); display: grid; place-items: center; color: white; box-shadow: var(--shadow); }
+    .mark svg { width: 27px; height: 27px; }
+    h1 { font-size: 24px; line-height: 1.15; margin: 0; letter-spacing: 0; }
+    .sub { color: var(--muted); font-size: 14px; margin-top: 4px; }
+    .control-group { border-top: 1px solid var(--line); padding-top: 18px; margin-top: 18px; }
+    .control-title { font-size: 13px; font-weight: 700; color: var(--muted); margin-bottom: 12px; }
+    label { display: block; font-size: 13px; font-weight: 650; margin-bottom: 6px; }
+    .field { margin-bottom: 14px; }
+    input, select { width: 100%; min-height: 42px; border: 1px solid var(--line); border-radius: 6px; padding: 9px 11px; background: #fff; color: var(--ink); outline: none; }
+    input:focus, select:focus { border-color: var(--mint); box-shadow: 0 0 0 3px rgba(47,143,114,.14); }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .segmented { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line); border-radius: 7px; overflow: hidden; background: #fff; }
+    .segmented button { min-height: 42px; border: 0; border-right: 1px solid var(--line); background: transparent; cursor: pointer; color: var(--muted); font-weight: 700; }
+    .segmented button:last-child { border-right: 0; }
+    .segmented button.active { background: var(--mint); color: #fff; }
+    .primary { width: 100%; min-height: 46px; border: 0; border-radius: 7px; background: var(--ink); color: #fff; font-weight: 750; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 18px; }
+    .primary svg { width: 18px; height: 18px; }
+    .topbar { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 18px; align-items: center; margin-bottom: 22px; }
+    .headline { font-size: 30px; line-height: 1.1; margin: 0; letter-spacing: 0; }
+    .status { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+    .pill { border-radius: 999px; padding: 8px 12px; font-size: 13px; font-weight: 700; background: #fff; border: 1px solid var(--line); white-space: nowrap; }
+    .pill.green { background: var(--mint-soft); color: #17664d; border-color: #bfe1d4; }
+    .pill.gold { background: #fff4df; color: #7c541b; border-color: #edd2a2; }
+    .pill.red { background: #fdebe7; color: #8d3023; border-color: #efc3ba; }
+    .summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 20px; }
+    .metric, .note, .exercise { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 10px 26px rgba(24, 39, 33, 0.07); }
+    .metric { padding: 16px; min-height: 92px; }
+    .metric-label { color: var(--muted); font-size: 12px; font-weight: 700; }
+    .metric-value { font-size: 28px; font-weight: 800; margin-top: 5px; line-height: 1.1; }
+    .workout-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 18px; align-items: start; }
+    .exercise-list { display: grid; gap: 12px; }
+    .exercise { padding: 16px; display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 14px; align-items: center; }
+    .number { width: 40px; height: 40px; border-radius: 8px; display: grid; place-items: center; background: var(--mint-soft); color: #17664d; font-weight: 800; }
+    .exercise h2 { margin: 0; font-size: 18px; line-height: 1.2; letter-spacing: 0; }
+    .details { color: var(--muted); font-size: 13px; margin-top: 5px; }
+    .load { min-width: 108px; text-align: right; font-size: 23px; font-weight: 850; }
+    .load small { display: block; font-size: 12px; color: var(--muted); font-weight: 700; }
+    .note { padding: 18px; margin-bottom: 14px; }
+    .note h2 { margin: 0 0 10px; font-size: 16px; letter-spacing: 0; }
+    .note p, .note li { color: var(--muted); font-size: 14px; }
+    .note ul { padding-left: 18px; margin: 0; }
+    .quiet { color: var(--muted); font-size: 13px; margin-top: 14px; }
+    .bar { height: 10px; border-radius: 999px; background: #eef3f1; overflow: hidden; margin-top: 10px; }
+    .bar span { display: block; height: 100%; background: linear-gradient(90deg, var(--mint), var(--gold), var(--coral)); width: 42%; }
+    @media (max-width: 920px) { .app { grid-template-columns: 1fr; } aside { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); } main { padding: 22px; } .summary { grid-template-columns: repeat(2, minmax(0, 1fr)); } .workout-layout { grid-template-columns: 1fr; } .topbar { grid-template-columns: 1fr; } .status { justify-content: flex-start; } }
+    @media (max-width: 560px) { aside, main { padding: 18px; } .grid-3 { grid-template-columns: 1fr; } .summary { grid-template-columns: 1fr; } .exercise { grid-template-columns: 38px minmax(0, 1fr); align-items: start; } .load { grid-column: 2; text-align: left; } .headline { font-size: 25px; } }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <div class="brand"><div class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M3 9v6"></path><path d="M21 9v6"></path><path d="M8 8v8"></path><path d="M16 8v8"></path></svg></div><div><h1>Life-Fit Training Planner</h1><div class="sub">A weekly-safe version of your 3-day strength program</div></div></div>
+      <div class="control-group"><div class="control-title">1RM settings</div><div class="grid-3"><div class="field"><label for="squat">SQ</label><input id="squat" type="number" min="20" step="2.5" value="100"></div><div class="field"><label for="bench">BP</label><input id="bench" type="number" min="20" step="2.5" value="80"></div><div class="field"><label for="deadlift">DL</label><input id="deadlift" type="number" min="20" step="2.5" value="100"></div></div></div>
+      <div class="control-group"><div class="control-title">Today</div><div class="field"><label>Last completed day</label><div class="segmented" role="group" aria-label="Last completed day"><button type="button" data-last-day="1">Day 1</button><button type="button" data-last-day="2">Day 2</button><button type="button" data-last-day="3" class="active">Day 3</button></div></div><div class="field"><label for="gap">Days since last workout</label><input id="gap" type="number" min="1" max="60" step="1" value="7"></div><div class="field"><label for="timeCap">Available time</label><select id="timeCap"><option value="full">Full session, about 60 min</option><option value="short">Short session, about 40 min</option><option value="minimum">Minimum session, about 25 min</option></select></div><button class="primary" id="calculate" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg>Build today's session</button><div class="quiet">Settings are saved in this browser.</div></div>
+    </aside>
+    <main>
+      <div class="topbar"><h2 class="headline" id="headline">Today is Day 1</h2><div class="status"><span class="pill green" id="adjustPill">Normal</span><span class="pill" id="nextPill">Next: Day 2</span></div></div>
+      <section class="summary" aria-label="Session summary"><div class="metric"><div class="metric-label">Load factor</div><div class="metric-value" id="factor">100%</div></div><div class="metric"><div class="metric-label">Focus</div><div class="metric-value" id="focus">Build</div></div><div class="metric"><div class="metric-label">Time</div><div class="metric-value" id="duration">55m</div></div><div class="metric"><div class="metric-label">RPE cap</div><div class="metric-value" id="rpeCap">8</div></div></section>
+      <div class="workout-layout"><section class="exercise-list" id="exerciseList" aria-label="Exercises"></section><section><div class="note"><h2>Coach note</h2><p id="recommendation"></p><div class="bar" aria-hidden="true"><span id="stressBar"></span></div></div><div class="note"><h2>Operating rules</h2><ul><li>Run Day 1, Day 2, Day 3 in order, even if it takes three weeks.</li><li>After a gap of 15+ days, choose clean reps over load PRs.</li><li>On short days, keep the big lifts and cut accessories first.</li></ul></div><div class="note"><h2>Next session</h2><p id="nextMemo"></p></div></section></div>
+    </main>
+  </div>
+  <script>
+    const programs = {1:[{name:"Bench Press",base:"bench",pct:0.83,sets:1,reps:5,rpe:8,rest:"3-5 min",type:"main"},{name:"Bench Press Backoff",base:"bench",pct:0.78,sets:3,reps:5,rpe:8,rest:"3-5 min",type:"backoff"},{name:"Squat",base:"squat",pct:0.83,sets:1,reps:5,rpe:8,rest:"3-5 min",type:"main"},{name:"Squat Backoff",base:"squat",pct:0.78,sets:3,reps:5,rpe:8,rest:"3-5 min",type:"backoff"},{name:"Pull-up / Lat Pulldown",sets:3,reps:10,rpe:8,rest:"1.5-3 min",type:"accessory",accessoryBase:"bench",accessoryPct:0.55,unit:"kg",note:"Use lat pulldown if 10 pull-ups are not realistic today"},{name:"Lying Triceps Extension",sets:3,reps:10,rpe:8,rest:"1.5-3 min",type:"accessory",accessoryBase:"bench",accessoryPct:0.25,unit:"kg"},{name:"Abs",sets:3,reps:20,rpe:8,rest:"1.5 min",type:"accessory",note:"Crunch, leg raise, or cable crunch"}],2:[{name:"Deadlift Pattern",base:"deadlift",pct:0.80,sets:1,reps:5,rpe:7,rest:"3-5 min",type:"main"},{name:"Deadlift Pattern Backoff",base:"deadlift",pct:0.73,sets:3,reps:5,rpe:7,rest:"3-5 min",type:"backoff"},{name:"Dumbbell Shoulder Press",sets:3,reps:8,rpe:8,rest:"3 min",type:"mainAccessory",accessoryBase:"bench",accessoryPct:0.15,unit:"kg/hand",note:"Machine shoulder press is fine too"},{name:"Dumbbell Curl",sets:3,reps:10,rpe:8,rest:"1.5 min",type:"accessory",accessoryBase:"bench",accessoryPct:0.125,unit:"kg/hand"},{name:"Bulgarian Split Squat",sets:3,reps:8,rpe:8,rest:"3-5 min",type:"accessory",accessoryBase:"squat",accessoryPct:0.07,unit:"kg/hand"},{name:"Side Raise",sets:3,reps:15,rpe:8,rest:"1.5 min",type:"accessory",accessoryBase:"bench",accessoryPct:0.075,unit:"kg/hand"}],3:[{name:"Squat Pattern",base:"squat",pct:0.72,sets:3,reps:8,rpe:8,rest:"3-5 min",type:"main"},{name:"Bench Press",base:"bench",pct:0.75,sets:3,reps:8,rpe:8,rest:"3-5 min",type:"main"},{name:"Dumbbell Row / Seated Row",sets:3,reps:10,rpe:8,rest:"1.5-3 min",type:"accessory",accessoryBase:"bench",accessoryPct:0.175,unit:"kg/hand",note:"On a machine, match the same RPE"},{name:"Face Pull",sets:3,reps:15,rpe:8,rest:"1.5 min",type:"accessory",accessoryBase:"bench",accessoryPct:0.3125,unit:"kg",note:"Use a band if no cable station is available"},{name:"Abs",sets:3,reps:20,rpe:8,rest:"1.5 min",type:"accessory",note:"Crunch, leg raise, or cable crunch"}]};
+    const state={lastDay:3}; const $=(id)=>document.getElementById(id); function roundToPlate(value){return Math.max(0,Math.round(value/2.5)*2.5)} function roundToIncrement(value,increment){return Math.max(0,Math.round(value/increment)*increment)} function nextDay(lastDay){return lastDay===3?1:lastDay+1}
+    function adjustmentForGap(gap){if(gap<=10)return{factor:1,label:"Normal",tone:"green",focus:"Build",rpeCap:8,stress:36,text:"Use the planned loads. If warm-ups feel unusually heavy, reduce backoff sets by 2.5 kg."}; if(gap<=14)return{factor:.95,label:"Small deload",tone:"gold",focus:"Return",rpeCap:8,stress:52,text:"Reduce main lifts by about 5%. Treat today as a smooth return session."}; if(gap<=21)return{factor:.90,label:"Restart mode",tone:"gold",focus:"Restart",rpeCap:7,stress:68,text:"Reduce loads by about 10% and cut one backoff or accessory set. Leave energy for parenting life."}; return{factor:.82,label:"Technique check",tone:"red",focus:"Check",rpeCap:6,stress:84,text:"No PR hunting today. Move well, keep reps crisp, and use minimum accessories."}}
+    function durationFor(timeCap,count){if(timeCap==="minimum")return"25m"; if(timeCap==="short")return"40m"; return count>=7?"60m":"50m"} function filterForTime(items,timeCap){if(timeCap==="full")return items; if(timeCap==="short")return items.filter((item,index)=>index<5||item.name==="Abs"); return items.filter((item)=>item.type==="main"||item.type==="backoff").slice(0,4)}
+    function adjustedSets(item,gap,timeCap){let sets=item.sets; if(gap>14&&(item.type==="backoff"||item.type==="accessory"))sets=Math.max(1,sets-1); if(gap>21&&item.type==="accessory")sets=1; if(timeCap==="minimum"&&item.type==="backoff")sets=Math.min(2,sets); return sets}
+    function suggestedLoad(item,maxes,adj){if(item.base)return{value:`${roundToPlate(maxes[item.base]*item.pct*adj.factor)}kg`,label:`${Math.round(item.pct*100)}% base`}; if(item.accessoryBase){const increment=item.unit==="kg/hand"?1:2.5; return{value:`${roundToIncrement(maxes[item.accessoryBase]*item.accessoryPct*adj.factor,increment)}${item.unit||"kg"}`,label:"Suggested start"}} return{value:"Bodyweight",label:"Adjust by RPE"}}
+    function loadSettings(){const saved=JSON.parse(localStorage.getItem("lifeFitPlanner")||"{}"); ["squat","bench","deadlift","gap","timeCap"].forEach((key)=>{if(saved[key]!==undefined&&$(key))$(key).value=saved[key]}); if(saved.lastDay)setLastDay(Number(saved.lastDay))} function saveSettings(){localStorage.setItem("lifeFitPlanner",JSON.stringify({squat:$("squat").value,bench:$("bench").value,deadlift:$("deadlift").value,gap:$("gap").value,timeCap:$("timeCap").value,lastDay:state.lastDay}))} function setLastDay(day){state.lastDay=day; document.querySelectorAll("[data-last-day]").forEach((button)=>{button.classList.toggle("active",Number(button.dataset.lastDay)===day)})}
+    function render(){const maxes={squat:Number($("squat").value)||0,bench:Number($("bench").value)||0,deadlift:Number($("deadlift").value)||0}; const gap=Number($("gap").value)||1; const timeCap=$("timeCap").value; const day=nextDay(state.lastDay); const following=nextDay(day); const adj=adjustmentForGap(gap); const items=filterForTime(programs[day],timeCap); $("headline").textContent=`Today is Day ${day}`; $("nextPill").textContent=`Next: Day ${following}`; $("adjustPill").textContent=adj.label; $("adjustPill").className=`pill ${adj.tone}`; $("factor").textContent=`${Math.round(adj.factor*100)}%`; $("focus").textContent=adj.focus; $("duration").textContent=durationFor(timeCap,items.length); $("rpeCap").textContent=adj.rpeCap; $("recommendation").textContent=adj.text; $("stressBar").style.width=`${adj.stress}%`; $("nextMemo").textContent=`After today, your next session is Day ${following}. At a weekly pace, protecting the sequence matters more than forcing frequency.`; $("exerciseList").innerHTML=items.map((item,index)=>{const sets=adjustedSets(item,gap,timeCap); const rpe=Math.min(item.rpe,adj.rpeCap); const load=suggestedLoad(item,maxes,adj); const note=item.note?` / ${item.note}`:""; return `<article class="exercise"><div class="number">${index+1}</div><div><h2>${item.name}</h2><div class="details">${sets} sets x ${item.reps} reps / RPE ${rpe} / Rest ${item.rest}${note}</div></div><div class="load">${load.value}<small>${load.label}</small></div></article>`}).join(""); saveSettings()}
+    document.querySelectorAll("[data-last-day]").forEach((button)=>{button.addEventListener("click",()=>{setLastDay(Number(button.dataset.lastDay)); render()})}); ["squat","bench","deadlift","gap","timeCap"].forEach((id)=>{$(id).addEventListener("input",render); $(id).addEventListener("change",render)}); $("calculate").addEventListener("click",render); loadSettings(); render();
+  </script>
+</body>
+</html>
